@@ -1,0 +1,56 @@
+groups:
+  - name: zcash_node_alerts
+    rules:
+      - alert: ZcashSyncStalled
+        expr: rate(zcash_chain_verified_block_total[10m]) == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Zcash chain synchronization is stalled (instance {{ $labels.instance }})"
+          description: "No new blocks have been verified in the past 10 minutes."
+
+      - alert: ZcashHighDistanceToTip
+        expr: sync_estimated_distance_to_tip > 100
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Zcash node is falling behind network tip (instance {{ $labels.instance }})"
+          description: "Zcash node is currently {{ $value }} blocks behind the network tip for over 15 minutes."
+
+      - alert: ZcashNoPeersConnected
+        expr: count by (instance) (zcash_net_peers_connected) == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Zcash node has zero connected peers (instance {{ $labels.instance }})"
+          description: "The node has lost all peer connections and is isolated from the Zcash P2P network."
+
+      - alert: ZcashMempoolHighTransactionRejectionRate
+        expr: rate(mempool_failed_verify_tasks_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate of mempool transaction verification failures (instance {{ $labels.instance }})"
+          description: "Mempool verification failure rate is {{ $value | printf \"%.2f\" }} failures/sec."
+
+      - alert: ZcashRpcHighLatency
+        expr: rpc_request_duration_seconds{quantile="0.95"} > 1.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High JSON-RPC latency on Zcash node (instance {{ $labels.instance }})"
+          description: "Method {{ $labels.method }} 95th percentile response latency is {{ $value | printf \"%.3f\" }}s (>1s)."
+
+      - alert: ZcashRpcHighErrorRate
+        expr: sum by (instance) (rate(rpc_errors_total[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High JSON-RPC error rate (instance {{ $labels.instance }})"
+          description: "Zcash RPC server is generating {{ $value | printf \"%.2f\" }} errors per second."

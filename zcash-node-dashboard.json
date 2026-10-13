@@ -271,8 +271,10 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "count(zcash_net_peers_connected{instance=~\"$instance\"})",
+          "editorMode": "code",
+          "expr": "max(zcash_net_peers{instance=~\"$instance\"})",
           "legendFormat": "Peers",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -701,7 +703,8 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Finalized State Height"
+              "options": "Reorg limit (99 deep)",
+              "scope": "series"
             },
             "properties": [
               {
@@ -778,8 +781,10 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "expr": "state_finalized_block_height{instance=~\"$instance\"}",
-          "legendFormat": "Finalized State Height",
+          "legendFormat": "Reorg limit (99 deep)",
+          "range": true,
           "refId": "C"
         },
         {
@@ -933,8 +938,10 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "expr": "sum(rate(zcash_chain_verified_block_total{instance=~\"$instance\"}[$__rate_interval]))",
           "legendFormat": "Verified Blocks / sec",
+          "range": true,
           "refId": "A"
         },
         {
@@ -2851,6 +2858,6 @@
   "timezone": "browser",
   "title": "Zcash Node Overview",
   "uid": "zcash-node-overview",
-  "version": 5,
+  "version": 12,
   "weekStart": ""
 }

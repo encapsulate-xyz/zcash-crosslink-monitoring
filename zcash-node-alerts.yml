@@ -56,13 +56,13 @@ groups:
           description: "Mempool verification failure rate is {{ $value | printf \"%.2f\" }} failures/sec."
 
       - alert: ZcashRpcHighLatency
-        expr: rpc_request_duration_seconds{quantile="0.95"} > 0.1
+        expr: rpc_request_duration_seconds{quantile="0.95"} > 1.0
         for: 5m
         labels:
           severity: warning
         annotations:
           summary: "High JSON-RPC latency on Zcash node (instance {{ $labels.instance }})"
-          description: "Method {{ $labels.method }} 95th percentile response latency is {{ $value | printf \"%.3f\" }}s (>100ms)."
+          description: "Method {{ $labels.method }} 95th percentile response latency is {{ $value | printf \"%.3f\" }}s (>1s)."
 
       - alert: ZcashRpcHighErrorRate
         expr: sum by (instance) (rate(rpc_errors_total[5m])) > 5
